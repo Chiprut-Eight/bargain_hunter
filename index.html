@@ -182,20 +182,10 @@
               >ראשי</a
             >
             <a
-              href="#"
+              href="mailto:chiprut20@gmail.com"
               class="text-slate-300 font-medium hover:text-white transition-colors"
-              >מכרזים חדשים</a
+              >צור קשר</a
             >
-            <a
-              href="#"
-              class="text-slate-300 font-medium hover:text-white transition-colors"
-              >אודות</a
-            >
-            <button
-              class="bg-brand-500 hover:bg-brand-600 text-white px-5 py-2.5 rounded-full font-medium transition-colors shadow-lg shadow-brand-500/30"
-            >
-              התחברות
-            </button>
           </nav>
 
           <!-- Mobile Menu Button -->
@@ -229,9 +219,9 @@
       class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10 w-full overflow-hidden"
     >
       <!-- Welcome / Hero Header -->
-      <div class="mb-14 text-center md:text-right">
+      <div class="mb-10 text-center flex flex-col items-center">
         <h2
-          class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 tracking-tight"
+          class="text-4xl md:text-5xl lg:text-5xl font-extrabold text-white mb-4 tracking-tight"
         >
           המכרזים
           <span
@@ -239,10 +229,30 @@
             >החמים ביותר</span
           >
         </h2>
-        <p class="text-lg md:text-xl text-slate-400 max-w-2xl leading-relaxed">
-          ברוכים הבאים למערכת צייד המציאות. כאן יוצגו בקרוב המכרזים החדשים
-          וההזדמנויות שאסור לפספס במקום אחד.
+        <p class="text-lg md:text-xl text-slate-400 max-w-3xl leading-relaxed">
+          ברוכים הבאים למערכת <strong>צייד המציאות</strong>. 
+          אנו אוספים עבורכם עסקאות משתלמות ישירות ממאגרי הממשלה (רכבי ממשלה ממינהל הרכב, משטרה/מכס, רכבי וציוד הוצאה לפועל ונדל"ן עזוב מהאפוטרופוס הכללי).
+          הנתונים נשאבים ומתעדכנים <strong>מדי יום בשעה 08:00 בבוקר</strong> כדי להבטיח שתמיד תהיו צעד אחד לפני כולם!
         </p>
+      </div>
+
+      <!-- Controls (Filter & Sort) -->
+      <div class="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-800/40 p-4 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
+        <div class="flex flex-wrap gap-2 w-full md:w-auto" id="filter-buttons">
+          <button class="filter-btn px-4 py-2 rounded-xl bg-brand-500 text-white font-medium text-sm transition-colors" data-filter="all">הכל</button>
+          <button class="filter-btn px-4 py-2 rounded-xl bg-slate-700 text-slate-300 hover:bg-slate-600 font-medium text-sm transition-colors" data-filter="car">רכבים</button>
+          <button class="filter-btn px-4 py-2 rounded-xl bg-slate-700 text-slate-300 hover:bg-slate-600 font-medium text-sm transition-colors" data-filter="real_estate">נדל"ן</button>
+          <button class="filter-btn px-4 py-2 rounded-xl bg-slate-700 text-slate-300 hover:bg-slate-600 font-medium text-sm transition-colors" data-filter="equipment">ציוד (הוצל"פ)</button>
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <label class="text-slate-400 text-sm whitespace-nowrap hidden sm:block">סנן לפי:</label>
+          <select id="price-sort" class="bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 outline-none">
+            <option value="default">ממליץ מהחדש לישן</option>
+            <option value="cheap">מהזול ליקר</option>
+            <option value="expensive">מהיקר לזול</option>
+            <option value="profit">אחוז רווח פוטנציאלי</option>
+          </select>
+        </div>
       </div>
 
       <!-- Deals Grid (Auction Placeholders) -->
@@ -271,42 +281,11 @@
           &copy; 2026 צייד המציאות. כל הזכויות שמורות.
         </p>
         <div class="flex gap-6">
-          <!-- Social placeholder icons -->
           <a
-            href="#"
-            class="text-slate-500 hover:text-brand-400 transition-colors"
+            href="mailto:chiprut20@gmail.com"
+            class="text-slate-500 hover:text-brand-400 transition-colors font-medium text-sm"
           >
-            <span class="sr-only">Facebook</span>
-            <svg
-              class="h-5 w-5"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-          <a
-            href="#"
-            class="text-slate-500 hover:text-brand-400 transition-colors"
-          >
-            <span class="sr-only">Instagram</span>
-            <svg
-              class="h-5 w-5"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
-                clip-rule="evenodd"
-              />
-            </svg>
+            צור קשר
           </a>
         </div>
       </div>
@@ -314,28 +293,28 @@
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
         const grid = document.getElementById('auctions-grid');
-        
-        try {
-          const response = await fetch('deals.json');
-          if (!response.ok) throw new Error('Failed to fetch deals');
-          const deals = await response.json();
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const sortSelect = document.getElementById('price-sort');
+        let allDeals = [];
+        let currentFilter = 'all';
+        let currentSort = 'default';
+
+        function renderDeals(dealsToRender) {
+          grid.innerHTML = '';
           
-          grid.innerHTML = ''; // Clear loading state
-          
-          if (!deals || deals.length === 0) {
+          if (!dealsToRender || dealsToRender.length === 0) {
             grid.innerHTML = `<div class="col-span-full text-center p-12 bg-slate-800/40 rounded-3xl border border-slate-700/50 shadow-xl backdrop-blur-sm">
               <div class="w-16 h-16 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
               </div>
               <h3 class="text-2xl font-bold text-white mb-2">לא נמצאו עסקאות</h3>
-              <p class="text-slate-400 max-w-md mx-auto">כרגע אין מכרזים פעילים במערכת שתואמים לחיפוש שלך. אנא נסו שוב מאוחר יותר או רעננו את העמוד.</p>
+              <p class="text-slate-400 max-w-md mx-auto">כרגע אין מכרזים פעילים במערכת שתואמים לחיפוש שלך.</p>
             </div>`;
             return;
           }
 
-          deals.forEach(deal => {
-            // Calculate profit percentage: ((Market Price - Opening Price) / Market Price) * 100
-            const profitPercentage = Math.round(((deal.marketValue - deal.openingPrice) / deal.marketValue) * 100);
+          dealsToRender.forEach(deal => {
+            const profitPercentage = Math.round(((deal.marketValue - deal.openingPrice) / (deal.marketValue || 1)) * 100) || 0;
             
             const formatter = new Intl.NumberFormat('he-IL', {
               style: 'currency',
@@ -344,8 +323,8 @@
               maximumFractionDigits: 0
             });
             
-            const marketStr = formatter.format(deal.marketValue);
-            const openingStr = formatter.format(deal.openingPrice);
+            const marketStr = formatter.format(deal.marketValue || 0);
+            const openingStr = formatter.format(deal.openingPrice || 0);
             
             let badgeClass = 'bg-brand-500 border-brand-400';
             let iconSvg = '';
@@ -402,21 +381,76 @@
               </div>
             </div>
             
-            <button class="w-full mt-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+            <a href="${deal.link || '#'}" target="_blank" rel="noopener noreferrer" class="w-full mt-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
               <span>לצפייה בפרטים</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="rotate-180"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
+            </a>
           </div>
         </article>
             `;
             grid.insertAdjacentHTML('beforeend', cardHTML);
           });
+        }
+
+        function applyFiltersAndSort() {
+          let filteredDeals = [...allDeals];
+          
+          if (currentFilter !== 'all') {
+            filteredDeals = filteredDeals.filter(d => d.type === currentFilter);
+          }
+          
+          if (currentSort === 'cheap') {
+            filteredDeals.sort((a, b) => a.openingPrice - b.openingPrice);
+          } else if (currentSort === 'expensive') {
+            filteredDeals.sort((a, b) => b.openingPrice - a.openingPrice);
+          } else if (currentSort === 'profit') {
+            filteredDeals.sort((a, b) => {
+              const profitA = ((a.marketValue - a.openingPrice) / (a.marketValue || 1));
+              const profitB = ((b.marketValue - b.openingPrice) / (b.marketValue || 1));
+              return profitB - profitA;
+            });
+          } else {
+             // By default, assume recently appended deals are newer, so reverse them
+             filteredDeals.reverse();
+          }
+          
+          renderDeals(filteredDeals);
+        }
+
+        // Initialize UI Events
+        filterButtons.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            filterButtons.forEach(b => {
+              b.classList.remove('bg-brand-500', 'text-white');
+              b.classList.add('bg-slate-700', 'text-slate-300');
+            });
+            e.target.classList.remove('bg-slate-700', 'text-slate-300');
+            e.target.classList.add('bg-brand-500', 'text-white');
+            
+            currentFilter = e.target.getAttribute('data-filter');
+            applyFiltersAndSort();
+          });
+        });
+
+        sortSelect.addEventListener('change', (e) => {
+          currentSort = e.target.value;
+          applyFiltersAndSort();
+        });
+
+        try {
+          // Append timestamp to prevent aggressive caching
+          const response = await fetch('deals.json?t=' + new Date().getTime());
+          if (!response.ok) throw new Error('Failed to fetch deals');
+          
+          const deals = await response.json();
+          allDeals = deals || [];
+          applyFiltersAndSort();
           
         } catch (error) {
           console.error('Error fetching deals:', error);
           grid.innerHTML = `<div class="col-span-full text-center p-8 bg-slate-800/50 rounded-2xl border border-slate-700">
             <p class="text-red-400 mb-2">שגיאה בטעינת הנתונים</p>
-            <p class="text-slate-400 text-sm font-medium">כדי לטעון קבצים לוקאליים (JSON) יש לפתוח את הקובץ באמצעות שרת מקומי (כמו Live Server מ-VS Code) בגלל מדיניות ה-CORS בדפדפנים.</p>
+            <p class="text-slate-400 text-sm font-medium">בדקו ש- deals.json זמין ושהפרויקט פועל דרך שרת.</p>
           </div>`;
         }
       });

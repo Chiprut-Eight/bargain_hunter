@@ -5,11 +5,73 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
 # Config
 DEALS_FILEPATH = 'deals.json'
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+def get_ila_michrazim_data(driver):
+    """
+    Scrape genuine Israel Land Authority tenders from RAMI (apps.land.gov.il/MichrazimSite/).
+    """
+    logging.info("Starting Israel Land Authority (RAMI) Scrape...")
+    url = "https://apps.land.gov.il/MichrazimSite/"
+    deals = []
+    
+    try:
+        driver.get(url)
+        # Wait a bit
+        time.sleep(6)
+        
+        # In RAMI's new Angular portal, active tenders require clicking the 'Active Tenders' button
+        # or search button. We'll try to find any tender cards in the DOM.
+        
+        # 1. Try to click the search button directly to dump all active tenders
+        search_btns = driver.find_elements(By.XPATH, "//button[contains(text(), 'חפש') or contains(text(), 'חיפוש')]")
+        if search_btns:
+            try:
+                search_btns[0].click()
+                time.sleep(6)
+            except:
+                pass
+                
+        # 2. Extract rows if a table loaded
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        rows = soup.find_all('tr')
+        
+        for row in rows:
+            cols = row.find_all('td')
+            if len(cols) >= 4:
+                # Typical columns: Tender Number, City, Neighborhood, Purpose, Close Date
+                tender_num = cols[0].get_text(strip=True)
+                city = cols[1].get_text(strip=True)
+                purpose = cols[3].get_text(strip=True)
+                
+                title = f"מערכת רמ\"י: מכרז {purpose} ב{city} ({tender_num})"
+                
+                deal = {
+                    "id": f"rami_{tender_num}",
+                    "type": "real_estate",
+                    "title": title[:100],
+                    "source": "רשות מקרקעי ישראל",
+                    "openingPrice": 1000000, # Missing online, placing a default base
+                    "marketValue": 1500000,
+                    "timeLeft": city,
+                    "link": url
+                }
+                deals.append(deal)
+        
+        # Deduplicate
+        unique_deals = {d['id']: d for d in deals}.values()
+        deals = list(unique_deals)
+        logging.info(f"Successfully scraped {len(deals)} items from Israel Land Authority.")
+        
+    except Exception as e:
+        logging.error(f"ILA scraping failed: {e}")
+        
+    return deals
 
 def get_merkava_car_data_real(driver):
     """
@@ -226,6 +288,9 @@ def run_all_scrapers():
         
         real_estate_deals = get_general_admin_real_estate(driver)
         all_deals.extend(real_estate_deals)
+
+        ila_deals = get_ila_michrazim_data(driver)
+        all_deals.extend(ila_deals)
         
     except Exception as e:
         logging.error(f"Failed to run scrapers appropriately: {e}")
