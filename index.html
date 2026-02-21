@@ -26,6 +26,8 @@
       href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
     <!-- Tailwind CSS (via CDN for basic structure) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -176,6 +178,7 @@
 
           <!-- Desktop Navigation -->
           <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
+            <button id="toggleMapBtn" class="text-white font-medium hover:text-brand-400 transition-colors bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-700">תצוגת מפה 🗺️</button>
             <a
               href="#"
               class="text-white font-medium hover:text-brand-400 transition-colors"
@@ -268,6 +271,19 @@
             <p class="mt-4 text-lg font-medium">טוען מכרזים...</p>
         </div>
       </section>
+
+      <!-- Map View (Hidden by default) -->
+      <div id="mapContainer" class="hidden w-full h-[600px] rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 mt-8 relative z-0">
+        <div id="map" class="w-full h-full z-0 relative"></div>
+      </div>
+
+      <!-- Deal Modal (Hidden by default) -->
+      <div id="dealModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="relative bg-slate-800 border border-slate-700 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300" id="modalContentPanel">
+          <!-- Modal content injected via JS -->
+        </div>
+      </div>
     </main>
 
     <!-- Light Footer -->
@@ -290,16 +306,158 @@
         </div>
       </div>
     </footer>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
         const grid = document.getElementById('auctions-grid');
+        const mapContainer = document.getElementById('mapContainer');
+        const toggleMapBtn = document.getElementById('toggleMapBtn');
         const filterButtons = document.querySelectorAll('.filter-btn');
         const sortSelect = document.getElementById('price-sort');
+        
         let allDeals = [];
         let currentFilter = 'all';
         let currentSort = 'default';
+        let isMapVisible = false;
+        let myMap = null;
+        let mapMarkers = [];
 
-        function renderDeals(dealsToRender) {
+        // Toggle Map View
+        toggleMapBtn.addEventListener('click', () => {
+          isMapVisible = !isMapVisible;
+          if (isMapVisible) {
+            grid.classList.add('hidden');
+            mapContainer.classList.remove('hidden');
+            toggleMapBtn.innerHTML = 'תצוגת כרטיסיות 🗂️';
+            toggleMapBtn.classList.add('bg-brand-500');
+            toggleMapBtn.classList.remove('bg-slate-800/50');
+            
+            if (!myMap) {
+              // Initialize Map centered on Israel
+              myMap = L.map('map').setView([31.5, 34.8], 7);
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '© OpenStreetMap contributors'
+              }).addTo(myMap);
+            }
+            // Give map time to render its container properly since it was hidden
+            setTimeout(() => {
+              myMap.invalidateSize();
+              updateMapMarkers();
+            }, 100);
+
+          } else {
+            grid.classList.remove('hidden');
+            mapContainer.classList.add('hidden');
+            toggleMapBtn.innerHTML = 'תצוגת מפה 🗺️';
+            toggleMapBtn.classList.remove('bg-brand-500');
+            toggleMapBtn.classList.add('bg-slate-800/50');
+          }
+        });
+
+        async function geocodeAddress(address) {
+          // Simple client-side mock geocoding based on common cities, as actual Nominatim API heavily rate-limits
+          const citiesMap = {
+            "תל אביב": [32.0853, 34.7818],
+            "ירושלים": [31.7683, 35.2137],
+            "חיפה": [32.7940, 34.9896],
+            "באר שבע": [31.2518, 34.7913],
+            "רמלה": [31.9272, 34.8643], // Ramla is in merkava
+            "חולון": [32.0158, 34.7874],
+            "נתניה": [32.3215, 34.8532],
+            "ניר צבי": [31.9568, 34.8211]
+          };
+          for (const [city, coords] of Object.entries(citiesMap)) {
+            if (address && address.includes(city)) return coords;
+          }
+          // Default fallback (somewhere central Israel randomly jittered)
+          return [31.5 + (Math.random() * 1.5), 34.5 + (Math.random() * 0.5)];
+        }
+
+        async function updateMapMarkers() {
+          if (!myMap || !isMapVisible) return;
+          
+          // Clear old markers
+          mapMarkers.forEach(m => myMap.removeLayer(m));
+          mapMarkers = [];
+          
+          // Use current filtered/sorted deals
+          let activeDeals = getFilteredDeals();
+          
+          for (const deal of activeDeals) {
+            let address = deal.city || deal.timeLeft || "Israel";
+            let coords = await geocodeAddress(address);
+            
+            // Add slight random jitter so markers don't overlap exactly
+            coords[0] += (Math.random() - 0.5) * 0.01;
+            coords[1] += (Math.random() - 0.5) * 0.01;
+            
+            let iconColor = 'blue';
+            if (deal.type === 'car') iconColor = 'green';
+            if (deal.type === 'equipment') iconColor = 'red';
+            
+            let markerHtmlStyles = `
+              background-color: ${iconColor};
+              width: 2rem;
+              height: 2rem;
+              display: block;
+              left: -1rem;
+              top: -1rem;
+              position: relative;
+              border-radius: 3rem 3rem 0;
+              transform: rotate(45deg);
+              border: 1px solid #FFFFFF;
+              box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+            `;
+
+            let icon = L.divIcon({
+              className: "my-custom-pin",
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<span style="${markerHtmlStyles}" />`
+            });
+
+            const marker = L.marker(coords, {icon: icon}).addTo(myMap);
+            
+            const formatter = new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 });
+            marker.bindPopup(`
+              <div dir="rtl" class="font-heebo p-1">
+                <h4 class="font-bold text-sm mb-1">${deal.title}</h4>
+                <p class="text-xs text-slate-600 mb-1">${address}</p>
+                <p class="font-bold text-brand-600">${formatter.format(deal.openingPrice)}</p>
+                <a href="${deal.link}" target="_blank" class="text-xs text-blue-500 underline mt-1 inline-block">צפה בפרטים</a>
+              </div>
+            `);
+            mapMarkers.push(marker);
+          }
+        }
+        
+        function getFilteredDeals() {
+          let filteredDeals = [...allDeals];
+          if (currentFilter !== 'all') {
+            filteredDeals = filteredDeals.filter(d => d.type === currentFilter);
+          }
+          if (currentSort === 'cheap') {
+            filteredDeals.sort((a, b) => a.openingPrice - b.openingPrice);
+          } else if (currentSort === 'expensive') {
+            filteredDeals.sort((a, b) => b.openingPrice - a.openingPrice);
+          } else if (currentSort === 'profit') {
+            filteredDeals.sort((a, b) => {
+              const profitA = ((a.marketValue - a.openingPrice) / (a.marketValue || 1));
+              const profitB = ((b.marketValue - b.openingPrice) / (b.marketValue || 1));
+              return profitB - profitA;
+            });
+          } else {
+             filteredDeals.reverse();
+          }
+          return filteredDeals;
+        }
+
+        function renderDeals() {
+          const dealsToRender = getFilteredDeals();
           grid.innerHTML = '';
           
           if (!dealsToRender || dealsToRender.length === 0) {
@@ -346,6 +504,12 @@
               iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><circle cx="12" cy="12" r="7"></circle><polyline points="12 9 12 12 13.5 13.5"></polyline><path d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83"></path></svg>`;
             }
             
+            let risksHTML = '';
+            if (deal.risk_flags && deal.risk_flags.length > 0) {
+              const riskBadges = deal.risk_flags.map(risk => `<span class="bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded text-xs font-bold">${risk}</span>`).join(' ');
+              risksHTML = `<div class="mt-2 flex flex-wrap gap-1 mb-2">${riskBadges}</div>`;
+            }
+            
             const cardHTML = `
         <article class="card-glass rounded-3xl overflow-hidden flex flex-col h-full group">
           <div class="h-56 relative overflow-hidden bg-slate-800">
@@ -366,6 +530,7 @@
             <h3 class="text-xl font-bold text-white group-hover:text-brand-400 transition-colors line-clamp-2 leading-snug">
               ${deal.title}
             </h3>
+            ${risksHTML}
             
             <div class="bg-slate-800/50 rounded-2xl p-4 mt-auto border border-slate-700/50">
               <div class="flex justify-between items-center mb-2">
@@ -381,40 +546,160 @@
               </div>
             </div>
             
-            <a href="${deal.link || '#'}" target="_blank" rel="noopener noreferrer" class="w-full mt-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-              <span>לצפייה בפרטים</span>
+            <button onclick="openModal('${deal.id}')" class="w-full mt-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-brand-500/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+              <span>למדריך הגשה</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="rotate-180"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </a>
+            </button>
           </div>
         </article>
             `;
             grid.insertAdjacentHTML('beforeend', cardHTML);
           });
         }
+        
+        window.closeModal = function() {
+          const modal = document.getElementById('dealModal');
+          const panel = document.getElementById('modalContentPanel');
+          modal.classList.remove('opacity-100');
+          panel.classList.remove('scale-100');
+          setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = ''; // Restore scrolling
+          }, 300);
+        };
+
+        window.openModal = function(dealId) {
+          const deal = allDeals.find(d => d.id === dealId);
+          if (!deal) return;
+          
+          const modal = document.getElementById('dealModal');
+          const panel = document.getElementById('modalContentPanel');
+          
+          let actionGuideHTML = '';
+          if (deal.source.includes('מרכבה') || deal.source.includes('מינהל הרכב')) {
+            actionGuideHTML = `
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
+                <div><h4 class="font-bold text-white mb-1">הרשמה למכרז המקוון</h4><p class="text-sm text-slate-400">היכנסו למערכת המרכבה הממשלתית (נדרשת הזדהות לאומית).</p></div>
+              </li>
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
+                <div><h4 class="font-bold text-white mb-1">תשלום פקדון הערבות</h4><p class="text-sm text-slate-400">יש לשלם 10% משווי ההצעה שאתם מגישים כדי להשתתף.</p></div>
+              </li>
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
+                <div><h4 class="font-bold text-white mb-1">הגשת המחיר</h4><p class="text-sm text-slate-400">מומלץ להגיש סביב ה-${new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.openingPrice * 1.1)} (תמיד עדיף להציע סכום "לא עגול").</p></div>
+              </li>`;
+          } else {
+             actionGuideHTML = `
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
+                <div><h4 class="font-bold text-white mb-1">קריאת חוברת המכרז</h4><p class="text-sm text-slate-400">וודאו שאין חריגות בנסח או פולשים לנכס (Risk Analysis לא איתר ברמת ה-AI הראשונית).</p></div>
+              </li>
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
+                <div><h4 class="font-bold text-white mb-1">הפקדת ערבות בנקאית</h4><p class="text-sm text-slate-400">יש לגשת לבנק ולהפיק צ'ק בנקאי לפקודת האפוטרופוס הכללי / רמ"י.</p></div>
+              </li>
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
+                <div><h4 class="font-bold text-white mb-1">מסירה לתיבה</h4><p class="text-sm text-slate-400">יש לשלשל את טופס ההצעה המקורי והערבות במעטפה אטומה בתיבת המכרזים.</p></div>
+              </li>`;
+          }
+          
+          let risksListHTML = '<p class="text-emerald-400 text-sm font-semibold flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> לא אותרו מילות אזהרה קריטיות (Risk Flags) בקובץ השמאות.</p>';
+          if (deal.risk_flags && deal.risk_flags.length > 0) {
+            risksListHTML = `<div class="bg-red-500/10 border border-red-500/30 rounded-xl p-3"><p class="text-red-400 text-sm font-bold flex items-center gap-1.5 mb-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> סיכונים מהותיים שאותרו ע"י ה-AI (יש לבחון חוברת!):</p><ul class="list-disc pl-5 rtl:pr-5 rtl:pl-0 text-slate-300 text-sm space-y-1">` + 
+                         deal.risk_flags.map(r => `<li>${r}</li>`).join('') + `</ul></div>`;
+          }
+
+          let marketStr = new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.marketValue || 0);
+          let openingStr = new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.openingPrice || 0);
+          let profitPercentage = Math.round(((deal.marketValue - deal.openingPrice) / (deal.marketValue || 1)) * 100) || 0;
+
+          panel.innerHTML = `
+            <div class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 border-b border-slate-700 p-4 sm:p-6 flex justify-between items-start">
+              <div class="pr-2">
+                <span class="inline-block px-2.5 py-1 bg-slate-700 text-slate-300 text-xs font-bold rounded-lg mb-3">${deal.source}</span>
+                <h2 class="text-2xl font-bold text-white leading-tight">${deal.title}</h2>
+              </div>
+              <button onclick="closeModal()" class="text-slate-400 hover:text-white bg-slate-700/50 hover:bg-slate-700 p-2 rounded-full transition-colors flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            
+            <div class="p-4 sm:p-6 space-y-8">
+              <!-- AI Executive Summary -->
+              <section>
+                <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                  <span class="bg-brand-500/20 text-brand-400 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                  </span>
+                  תקציר כלכלי (Benchmarking)
+                </h3>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-700/50">
+                    <div class="text-sm text-slate-400 mb-1">שווי מחירון / שוק</div>
+                    <div class="text-xl font-bold text-slate-300" dir="ltr">${marketStr}</div>
+                  </div>
+                  <div class="bg-slate-900/50 p-4 rounded-2xl border border-brand-500/30">
+                    <div class="text-sm text-brand-400 mb-1">מחיר פתיחה</div>
+                    <div class="text-xl font-bold text-white" dir="ltr">${openingStr}</div>
+                  </div>
+                  <div class="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/30 col-span-2">
+                    <div class="text-sm text-emerald-400 mb-1">פוטנציאל רווח משוער (לפני השבחה)</div>
+                    <div class="text-2xl font-extrabold text-emerald-400" dir="rtl">${profitPercentage}% מתחת למחירון <span class="text-sm font-medium opacity-80">(${new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.marketValue - deal.openingPrice)})</span></div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Risk Analysis -->
+              <section>
+                <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                  <span class="bg-rose-500/20 text-rose-400 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                  ניתוח סיכונים AI
+                </h3>
+                ${risksListHTML}
+              </section>
+
+              <!-- Actionable Guide -->
+              <section>
+                <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                  <span class="bg-indigo-500/20 text-indigo-400 p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  </span>
+                  איך מגישים? (אפס בירוקרטיה)
+                </h3>
+                <ol class="space-y-6 relative before:absolute before:inset-y-0 before:right-4 before:w-0.5 before:bg-slate-700">
+                  ${actionGuideHTML}
+                </ol>
+              </section>
+            </div>
+            
+            <div class="sticky bottom-0 bg-slate-900/90 backdrop-blur border-t border-slate-700 p-4 sm:p-6 flex flex-col sm:flex-row gap-3 mt-4">
+              <a href="${deal.link}" target="_blank" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 px-6 rounded-xl text-center shadow-lg shadow-brand-500/25 transition-colors">
+                לעמוד המכרז הממשלתי המלא
+              </a>
+              <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-xl text-center transition-colors">
+                הורד אוטומטית טפסי הגשה
+              </button>
+            </div>
+          `;
+          
+          document.body.style.overflow = 'hidden'; // Prevent scrolling under modal
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          // Trigger reflow for animation
+          void modal.offsetWidth;
+          modal.classList.add('opacity-100');
+          panel.classList.add('scale-100');
+        };
 
         function applyFiltersAndSort() {
-          let filteredDeals = [...allDeals];
-          
-          if (currentFilter !== 'all') {
-            filteredDeals = filteredDeals.filter(d => d.type === currentFilter);
-          }
-          
-          if (currentSort === 'cheap') {
-            filteredDeals.sort((a, b) => a.openingPrice - b.openingPrice);
-          } else if (currentSort === 'expensive') {
-            filteredDeals.sort((a, b) => b.openingPrice - a.openingPrice);
-          } else if (currentSort === 'profit') {
-            filteredDeals.sort((a, b) => {
-              const profitA = ((a.marketValue - a.openingPrice) / (a.marketValue || 1));
-              const profitB = ((b.marketValue - b.openingPrice) / (b.marketValue || 1));
-              return profitB - profitA;
-            });
-          } else {
-             // By default, assume recently appended deals are newer, so reverse them
-             filteredDeals.reverse();
-          }
-          
-          renderDeals(filteredDeals);
+          renderDeals();
+          if (isMapVisible) updateMapMarkers();
         }
 
         // Initialize UI Events

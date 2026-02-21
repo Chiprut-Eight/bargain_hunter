@@ -7,6 +7,9 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
+import ai_parser
+import pdf_analyzer
+import benchmark
 
 # Config
 DEALS_FILEPATH = 'deals.json'
@@ -61,6 +64,9 @@ def get_ila_michrazim_data(driver):
                     "timeLeft": city,
                     "link": url
                 }
+                deal = ai_parser.parse_deal(deal)
+                deal = pdf_analyzer.append_risk_analysis(deal)
+                deal = benchmark.enrich_with_benchmark(deal)
                 deals.append(deal)
         
         # Deduplicate
@@ -134,10 +140,9 @@ def get_merkava_car_data_real(driver):
         seen_titles = set()
         for deal in auctions_found:
             if deal['title'] not in seen_titles and len(unique_deals) < 15:
-                # Add fake prices just so the UI cards look good and calculating percentages doesn't break
-                deal['marketValue'] = 80000 + (len(unique_deals) * 5000)
-                deal['openingPrice'] = int(deal['marketValue'] * 0.6) # 40% under market for the "wow" factor
-                
+                deal = ai_parser.parse_deal(deal)
+                deal = pdf_analyzer.append_risk_analysis(deal)
+                deal = benchmark.enrich_with_benchmark(deal)
                 unique_deals.append(deal)
         deals = unique_deals
         logging.info(f"Successfully scraped {len(deals)} items via Selenium parsing.")
@@ -181,8 +186,13 @@ def get_merkava_eca_data_real(driver):
                             "openingPrice": 0,
                             "marketValue": 0,
                             "timeLeft": location[:20],
-                            "link": url
+                            "link": url,
+                            # Adding a sample dummy PDF link to ECA deals to demonstrate the Risk Analysis AI reading a PDF
+                            "pdf_link": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" if len(auctions_found) % 2 == 0 else None
                         }
+                        deal = ai_parser.parse_deal(deal)
+                        deal = pdf_analyzer.append_risk_analysis(deal)
+                        deal = benchmark.enrich_with_benchmark(deal)
                         auctions_found.append(deal)
                     except IndexError:
                         pass
@@ -191,8 +201,6 @@ def get_merkava_eca_data_real(driver):
         seen_titles = set()
         for deal in auctions_found:
             if deal['title'] not in seen_titles and len(unique_deals) < 10:
-                deal['marketValue'] = 15000 + (len(unique_deals) * 2000)
-                deal['openingPrice'] = int(deal['marketValue'] * 0.5) 
                 unique_deals.append(deal)
                 seen_titles.add(deal['title'])
                 
@@ -240,6 +248,9 @@ def get_general_admin_real_estate(driver):
                         "timeLeft": location[:20],
                         "link": url
                     }
+                    deal = ai_parser.parse_deal(deal)
+                    deal = pdf_analyzer.append_risk_analysis(deal)
+                    deal = benchmark.enrich_with_benchmark(deal)
                     auctions_found.append(deal)
 
         unique_deals = []
@@ -247,8 +258,6 @@ def get_general_admin_real_estate(driver):
         for deal in auctions_found:
             # Filter generalized words that aren't actually titles
             if deal['title'] not in seen_titles and len(unique_deals) < 6 and "חיפוש" not in deal['title']:
-                deal['marketValue'] = 1500000 + (len(unique_deals) * 150000)
-                deal['openingPrice'] = int(deal['marketValue'] * 0.8) # 20% under market
                 unique_deals.append(deal)
                 seen_titles.add(deal['title'])
                 

@@ -4,169 +4,201 @@
     "type": "car",
     "title": "מכרז מקוון למכירת רכב ממשלתי משומש (201-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 48000,
-    "marketValue": 80000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "רח' יוסף קלוזנר 20, רמלה",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_202-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכב ממשלתי משומש (202-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 51000,
-    "marketValue": 85000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "רח' יוסף קלוזנר 20, רמלה",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_103-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכבי משטרה ורכבי חילוט משומשים (103-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 54000,
-    "marketValue": 90000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "א.ת ניר צבי(ליד דלק מוטורס)",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_203-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכב ממשלתי משומש (203-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 57000,
-    "marketValue": 95000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "רח' יוסף קלוזנר 20, רמלה",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_104-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכבי משטרה ורכבי חילוט משומשים (104-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 60000,
+    "openingPrice": 65000,
     "marketValue": 100000,
     "timeLeft": "א.ת ניר צבי(ליד דלק מוטורס)",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_204-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכב ממשלתי משומש (204-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 63000,
-    "marketValue": 105000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "רח' יוסף קלוזנר 20, רמלה",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_105-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכבי משטרה ורכבי חילוט משומשים (105-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 66000,
-    "marketValue": 110000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "א.ת ניר צבי(ליד דלק מוטורס)",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_205-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכב ממשלתי משומש (205-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 69000,
-    "marketValue": 115000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "רח' יוסף קלוזנר 20, רמלה",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_106-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכבי משטרה ורכבי חילוט משומשים (106-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 72000,
-    "marketValue": 120000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "א.ת ניר צבי(ליד דלק מוטורס)",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_206-2026",
     "type": "car",
     "title": "מכרז מקוון למכירת רכב ממשלתי משומש (206-2026)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 75000,
-    "marketValue": 125000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "רח' יוסף קלוזנר 20, רמלה",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2026,
+    "raw_extracted": false
   },
   {
     "id": "merkava_101-2027",
     "type": "car",
     "title": "מכרז מקוון למכירת רכבי משטרה ורכבי חילוט משומשים (101-2027)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 78000,
-    "marketValue": 130000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "א.ת ניר צבי(ליד דלק מוטורס)",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2027,
+    "raw_extracted": false
   },
   {
     "id": "merkava_330",
     "type": "car",
     "title": "מכרז מתוכננן לשנת 2027 יתכנו שינויים בתאריכים (330)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 81000,
-    "marketValue": 135000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "יום לפתיחת המכרז",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2027,
+    "raw_extracted": false
   },
   {
     "id": "merkava_201-2027",
     "type": "car",
     "title": "מכרז מקוון למכירת רכב ממשלתי משומש (201-2027)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 84000,
-    "marketValue": 140000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "רח' יוסף קלוזנר 20, רמלה",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2027,
+    "raw_extracted": false
   },
   {
     "id": "merkava_358",
     "type": "car",
     "title": "מכרז מתוכננן לשנת 2027 יתכנו שינויים בתאריכים (358)",
     "source": "מינהל הרכב / משטרה (מרכבה)",
-    "openingPrice": 87000,
-    "marketValue": 145000,
+    "openingPrice": 65000,
+    "marketValue": 100000,
     "timeLeft": "יום לפתיחת המכרז",
-    "link": "https://merkava.mrp.gov.il/carpub/index.html"
+    "link": "https://merkava.mrp.gov.il/carpub/index.html",
+    "year": 2027,
+    "raw_extracted": false
   },
   {
     "id": "eca_0",
     "type": "equipment",
     "title": "מכרז מכירת כלי רכב",
     "source": "הוצאה לפועל",
-    "openingPrice": 7500,
-    "marketValue": 15000,
+    "openingPrice": 16250,
+    "marketValue": 25000,
     "timeLeft": "פעולה קודמת",
-    "link": "https://merkava.mrp.gov.il/rechev"
+    "link": "https://merkava.mrp.gov.il/rechev",
+    "pdf_link": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+    "risk_flags": []
   },
   {
     "id": "realestate_0",
     "type": "real_estate",
     "title": "היחידה לנכסים עזובים - לוח מכירת מקרקעין",
     "source": "האפוטרופוס הכללי",
-    "openingPrice": 1200000,
+    "openingPrice": 975000,
     "marketValue": 1500000,
     "timeLeft": "סוג:",
-    "link": "https://www.gov.il/he/pages/real_estate_list"
+    "link": "https://www.gov.il/he/pages/real_estate_list",
+    "raw_extracted": false
   },
   {
     "id": "realestate_1",
     "type": "real_estate",
     "title": "נכסים עזובים",
     "source": "האפוטרופוס הכללי",
-    "openingPrice": 1320000,
-    "marketValue": 1650000,
+    "openingPrice": 975000,
+    "marketValue": 1500000,
     "timeLeft": "מיקום:",
-    "link": "https://www.gov.il/he/pages/real_estate_list"
+    "link": "https://www.gov.il/he/pages/real_estate_list",
+    "raw_extracted": false
   }
 ]
