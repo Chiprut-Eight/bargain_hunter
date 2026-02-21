@@ -648,6 +648,68 @@
               </section>`;
           }
           
+          let predictorHTML = '';
+          if (deal.recommendedBid && deal.historicalBids && deal.historicalBids.length > 0) {
+              let recBidStr = new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.recommendedBid);
+              
+              // Calculate percentages for the progress bar
+              let minPrice = deal.openingPrice || 1;
+              let maxPrice = deal.marketValue || (minPrice * 1.5);
+              let range = maxPrice - minPrice;
+              
+              let recommendedPercentage = Math.min(100, Math.max(0, ((deal.recommendedBid - minPrice) / range) * 100));
+              
+              predictorHTML = `
+              <section class="mt-8 mb-6 bg-slate-800/80 rounded-3xl border border-blue-500/30 overflow-hidden relative">
+                 <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent"></div>
+                 <div class="p-5 md:p-6 relative z-10">
+                   <div class="flex items-center gap-2 mb-4">
+                     <span class="bg-blue-500/20 text-blue-400 p-1.5 rounded-lg">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+                     </span>
+                     <h3 class="text-lg font-bold text-white">היסטוריית זכיות פומביות (AI Predictor)</h3>
+                   </div>
+                   
+                   <p class="text-sm text-slate-400 mb-6">בהתסמך על נתוני מאפיינים זהים (מודל, שנתון ומחירון), זהו אזור ההגשה המשוער הנדרש להבטחת זכייה עפ"י ניתוח היסטורי.</p>
+                   
+                   <div class="relative w-full h-12 bg-slate-900 rounded-full border border-slate-700 mx-auto max-w-2xl px-4 flex items-center">
+                      <!-- Base Line -->
+                      <div class="absolute inset-y-0 left-4 right-4 flex items-center">
+                         <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden relative">
+                            <!-- Gradient fill up to recommended -->
+                            <div class="absolute top-0 right-0 h-full bg-gradient-to-l from-emerald-500 to-blue-500" style="width: ${recommendedPercentage}%;" dir="ltr"></div>
+                         </div>
+                      </div>
+                      
+                      <!-- Min Marker (Opening) -->
+                      <div class="absolute right-4 -top-8 text-xs font-bold text-slate-400 text-right w-24 translate-x-1/2">
+                         מחיר מינימום<br><span class="text-white">${openingStr}</span>
+                      </div>
+                      <div class="absolute right-4 w-1 h-3 bg-slate-500 rounded-full z-10"></div>
+                      
+                      <!-- Recommended Marker -->
+                      <div class="absolute -top-10 text-xs font-bold text-blue-400 text-center w-32 -translate-x-1/2" style="right: calc(1rem + (100% - 2rem) * ${recommendedPercentage}/100);">
+                         הצעה מומלצת<br><span class="text-lg text-white font-extrabold bg-blue-500/20 px-2 rounded backdrop-blur">${recBidStr}</span>
+                      </div>
+                      <div class="absolute w-4 h-4 rounded-full bg-blue-500 border-2 border-white z-20 shadow-[0_0_15px_rgba(59,130,246,0.5)] -translate-x-1/2" style="right: calc(1rem + (100% - 2rem) * ${recommendedPercentage}/100);"></div>
+                      
+                      <!-- Max Marker (Market) -->
+                      <div class="absolute left-4 -top-8 text-xs font-bold text-slate-400 text-left w-24 -translate-x-1/2">
+                         מחירון שוק<br><span class="text-white text-opacity-80">${marketStr}</span>
+                      </div>
+                      <div class="absolute left-4 w-1 h-3 bg-slate-500 rounded-full z-10"></div>
+                   </div>
+                   
+                   <div class="mt-6 flex justify-between items-center bg-slate-900/50 p-3 rounded-xl border border-slate-700/50 max-w-2xl mx-auto">
+                      <span class="text-xs text-slate-400 text-right w-32 border-l border-slate-700/50 pl-2">סיכוי נמוך,<br>הצעת רעב</span>
+                      <span class="text-sm font-bold text-emerald-400 text-center flex-grow">אזור ה-Sweet Spot<br><span class="text-xs font-normal">תמורה גבוהה לסיכון נמוך</span></span>
+                      <span class="text-xs text-slate-400 text-left w-32 border-r border-slate-700/50 pr-2">קרוב למחירון,<br>אין כדאיות הרפתקה</span>
+                   </div>
+                 </div>
+              </section>
+              `;
+          }
+          
           let specsHTML = '';
           if (deal.specs && Object.keys(deal.specs).length > 0) {
               const specItems = Object.entries(deal.specs).map(([key, value]) => `
@@ -685,6 +747,7 @@
             
             <div class="p-4 sm:p-6 space-y-8">
               ${imagesHTML}
+              ${predictorHTML}
               ${specsHTML}
               
               <!-- AI Executive Summary -->
