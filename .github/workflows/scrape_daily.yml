@@ -1,0 +1,36 @@
+name: Daily Scraper
+
+on:
+  schedule:
+    # Run every day at 06:00 UTC (which is 08:00 Israel Time)
+    - cron: "0 6 * * *"
+  # Allow manual trigger from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Scraper
+        run: python real_scraper.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add deals.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update deals.json with latest auctions" && git push)
