@@ -666,25 +666,26 @@
 
               <!-- Actionable Guide -->
               <section>
-                <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                  <span class="bg-indigo-500/20 text-indigo-400 p-1.5 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  </span>
-                  איך מגישים? (אפס בירוקרטיה)
-                </h3>
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span class="bg-indigo-500/20 text-indigo-400 p-1.5 rounded-lg">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </span>
+                    איך מגישים? (אפס בירוקרטיה)
+                  </h3>
+                  <span class="text-xs text-slate-500 font-medium px-2 py-1 bg-slate-800 rounded-md border border-slate-700">מדריך תהליך כללי</span>
+                </div>
+                <p class="text-xs text-slate-400 mb-4">* השלבים המפורטים מבוססים על תהליך ההגשה הסטנדרטי עבור מכרזי <strong>${deal.source}</strong>. יש לעיין תמיד בחוברת המכרז הרשמית לקבלת ההנחיות והטפסים המדויקים.</p>
                 <ol class="space-y-6 relative before:absolute before:inset-y-0 before:right-4 before:w-0.5 before:bg-slate-700">
                   ${actionGuideHTML}
                 </ol>
               </section>
             </div>
             
-            <div class="sticky bottom-0 bg-slate-900/90 backdrop-blur border-t border-slate-700 p-4 sm:p-6 flex flex-col sm:flex-row gap-3 mt-4">
-              <a href="${deal.link}" target="_blank" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 px-6 rounded-xl text-center shadow-lg shadow-brand-500/25 transition-colors">
-                לעמוד המכרז הממשלתי המלא
+            <div class="sticky bottom-0 bg-slate-900/90 backdrop-blur border-t border-slate-700 p-4 sm:p-6 flex mt-4">
+              <a href="${deal.link}" target="_blank" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 px-6 rounded-xl text-center shadow-lg shadow-brand-500/25 transition-colors text-lg">
+                מעבר לעמוד המכרז הממשלתי
               </a>
-              <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-xl text-center transition-colors">
-                הורד אוטומטית טפסי הגשה
-              </button>
             </div>
           `;
           
