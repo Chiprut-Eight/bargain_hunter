@@ -631,6 +631,40 @@
           let openingStr = new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.openingPrice || 0);
           let profitPercentage = Math.round(((deal.marketValue - deal.openingPrice) / (deal.marketValue || 1)) * 100) || 0;
 
+          let imagesHTML = '';
+          if (deal.images && deal.images.length > 0) {
+              imagesHTML = `
+              <section>
+                <div class="flex gap-3 overflow-x-auto pb-4 snap-x hide-scrollbar" style="scrollbar-width: none;">
+                    ${deal.images.map(img => `<div class="snap-center shrink-0 w-[240px] md:w-[280px]"><img src="${img}" class="w-full h-40 md:h-48 object-cover rounded-2xl border border-slate-700 shadow-lg"></div>`).join('')}
+                </div>
+              </section>`;
+          }
+          
+          let specsHTML = '';
+          if (deal.specs && Object.keys(deal.specs).length > 0) {
+              const specItems = Object.entries(deal.specs).map(([key, value]) => `
+                 <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50 flex flex-col">
+                    <span class="text-xs text-slate-400 mb-1">${key}</span>
+                    <span class="text-sm font-bold text-slate-200">${value}</span>
+                 </div>
+              `).join('');
+              
+              specsHTML = `
+              <section>
+                 <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-3">
+                   <span class="bg-blue-500/20 text-blue-400 p-1.5 rounded-lg">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                   </span>
+                   מפרט עמוק ופירוט
+                 </h3>
+                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    ${specItems}
+                 </div>
+              </section>
+              `;
+          }
+
           panel.innerHTML = `
             <div class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 border-b border-slate-700 p-4 sm:p-6 flex justify-between items-start">
               <div class="pr-2">
@@ -643,6 +677,9 @@
             </div>
             
             <div class="p-4 sm:p-6 space-y-8">
+              ${imagesHTML}
+              ${specsHTML}
+              
               <!-- AI Executive Summary -->
               <section>
                 <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
