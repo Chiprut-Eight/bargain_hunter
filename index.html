@@ -577,21 +577,21 @@
           const panel = document.getElementById('modalContentPanel');
           
           let actionGuideHTML = '';
-          if (deal.source.includes('מרכבה') || deal.source.includes('מינהל הרכב')) {
+          if (deal.type === 'car') {
             actionGuideHTML = `
               <li class="flex items-start gap-4">
                 <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
-                <div><h4 class="font-bold text-white mb-1">הרשמה למכרז המקוון</h4><p class="text-sm text-slate-400">היכנסו למערכת המרכבה הממשלתית (נדרשת הזדהות לאומית).</p></div>
+                <div><h4 class="font-bold text-white mb-1">הרשמה למכרז/מערכת המקוונת</h4><p class="text-sm text-slate-400">יש להיכנס לאתר הממשלתי/מערכת ההוצאה לפועל עם פרטי הזדהות לאומית.</p></div>
               </li>
               <li class="flex items-start gap-4">
                 <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
-                <div><h4 class="font-bold text-white mb-1">תשלום פקדון הערבות</h4><p class="text-sm text-slate-400">יש לשלם 10% משווי ההצעה שאתם מגישים כדי להשתתף.</p></div>
+                <div><h4 class="font-bold text-white mb-1">תשלום פקדון הערבות</h4><p class="text-sm text-slate-400">יש לשלם את הפיקדון או הערבות (לרוב סביב ה-10%) כדי להשתתף במכרז כלי הרכב.</p></div>
               </li>
               <li class="flex items-start gap-4">
                 <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
-                <div><h4 class="font-bold text-white mb-1">הגשת המחיר</h4><p class="text-sm text-slate-400">מומלץ להגיש סביב ה-${new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.openingPrice * 1.1)} (תמיד עדיף להציע סכום "לא עגול").</p></div>
+                <div><h4 class="font-bold text-white mb-1">הגשת המחיר</h4><p class="text-sm text-slate-400">מומלץ להגיש סביב ה-${new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(deal.openingPrice * 1.1)} (תמיד עדיף להציע סכום שאינו עגול).</p></div>
               </li>`;
-          } else {
+          } else if (deal.type === 'real_estate') {
              actionGuideHTML = `
               <li class="flex items-start gap-4">
                 <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
@@ -604,6 +604,20 @@
               <li class="flex items-start gap-4">
                 <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
                 <div><h4 class="font-bold text-white mb-1">מסירה לתיבה</h4><p class="text-sm text-slate-400">יש לשלשל את טופס ההצעה המקורי והערבות במעטפה אטומה בתיבת המכרזים.</p></div>
+              </li>`;
+          } else {
+             actionGuideHTML = `
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
+                <div><h4 class="font-bold text-white mb-1">בחינת חוברת ציוד ומטלטלין</h4><p class="text-sm text-slate-400">בדקו אילו פריטים נכללים במכרז ההוצאה לפועל (לרוב הציוד נמכר "As-is").</p></div>
+              </li>
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
+                <div><h4 class="font-bold text-white mb-1">הגשת הצעה והפקדה</h4><p class="text-sm text-slate-400">הגישו את הסכום הרצוי ושלמו את פקדון ההשתתפות הנדרש במסמכים.</p></div>
+              </li>
+              <li class="flex items-start gap-4">
+                <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
+                <div><h4 class="font-bold text-white mb-1">התמחרות / הודעת זכייה</h4><p class="text-sm text-slate-400">חכו להודעה מלשכת ההוצאה לפועל או עו"ד הכונס להליכי זכייה ואיסוף.</p></div>
               </li>`;
           }
           

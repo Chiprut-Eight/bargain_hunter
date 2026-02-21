@@ -178,9 +178,11 @@ def get_merkava_eca_data_real(driver):
                         auction_num = text_blocks[idx+1] if (idx+1) < len(text_blocks) else "N/A"
                         location = text_blocks[idx+2] if (idx+2) < len(text_blocks) else "N/A"
                         
+                        deal_type = "car" if any(x in title for x in ["רכב", "מכונית", "אופנוע", "משאית", "טרקטור", "יונדאי", "מאזדה", "שברולט"]) else "equipment"
+                        
                         deal = {
                             "id": f"eca_{len(auctions_found)}",
-                            "type": "equipment",
+                            "type": deal_type,
                             "title": f"{title}",
                             "source": "הוצאה לפועל",
                             "openingPrice": 0,
