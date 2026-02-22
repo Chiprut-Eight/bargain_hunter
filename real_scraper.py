@@ -228,7 +228,8 @@ def get_merkava_eca_equipment_data():
 
 def get_tax_authority_customs(driver):
     """
-    Scrape Israel Tax Authority / Customs confiscated goods using Gov.il JS api intercept.
+    Scrape Israel Tax Authority / Customs confiscated goods.
+    Uses the real CollectorsWebApi discovered via browser network inspection.
     """
     logging.info("Starting Tax Authority (Customs) Scrape...")
     url = "https://www.gov.il/he/departments/publications/Call_for_bids/customs-auctions"
@@ -238,31 +239,37 @@ def get_tax_authority_customs(driver):
         driver.get(url)
         time.sleep(5)
         
-        api_url = "https://www.gov.il/he/api/PublicationApi/Index?Skip=0&Limit=10&Topic=customs-auctions"
-        js_code = f"var callback = arguments[0]; fetch('{api_url}').then(r => r.json()).then(data => callback(data)).catch(e => callback({{'error': e.message}}));"
+        # Correct API discovered via browser DevTools inspection
+        api_url = "https://www.gov.il/CollectorsWebApi/api/DataCollector/GetResults?CollectorType=reports&CollectorType=rfp&Keywords=%D7%9E%D7%9B%D7%A1&type=rfp&culture=he"
+        js_code = f"var callback = arguments[0]; fetch('{api_url}').then(r => r.json()).then(data => callback(data)).catch(e => callback({{error: e.message}}));"
         
         result = driver.execute_async_script(js_code)
         
-        if isinstance(result, dict) and "results" in result:
-            for idx, item in enumerate(result['results']):
-                title = item.get("Title", "מכרז מכס")
-                desc = item.get("Description", "")
-                deal_url = f"https://www.gov.il{item.get('Url', '')}" if item.get('Url') else url
-                
-                deal = {
-                    "id": f"tax_customs_{idx}",
-                    "type": "equipment",
-                    "title": f"מכס ומע\"מ: {title}",
-                    "source": "רשות המסים - מכס",
-                    "openingPrice": 0,
-                    "marketValue": 0,
-                    "timeLeft": "פתוח להצעות",
-                    "link": deal_url
-                }
-                deal = ai_parser.parse_deal(deal)
-                deal = pdf_analyzer.append_risk_analysis(deal)
-                deal = benchmark.enrich_with_benchmark(deal)
-                deals.append(deal)
+        items = []
+        if isinstance(result, dict):
+            items = result.get('results', result.get('Results', []))
+        elif isinstance(result, list):
+            items = result
+        
+        for idx, item in enumerate(items):
+            title = item.get("Title", item.get("title", "מכרז מכס"))
+            item_url = item.get("Url", item.get("url", ""))
+            deal_url = f"https://www.gov.il{item_url}" if item_url and not item_url.startswith('http') else (item_url or url)
+            
+            deal = {
+                "id": f"tax_customs_{idx}",
+                "type": "equipment",
+                "title": f'מכס ומע"מ: {title}',
+                "source": 'רשות המסים - מכס',
+                "openingPrice": 0,
+                "marketValue": 0,
+                "timeLeft": "פתוח להצעות",
+                "link": deal_url
+            }
+            deal = ai_parser.parse_deal(deal)
+            deal = pdf_analyzer.append_risk_analysis(deal)
+            deal = benchmark.enrich_with_benchmark(deal)
+            deals.append(deal)
         
         logging.info(f"Successfully scraped {len(deals)} items from Tax Authority.")
     except Exception as e:
@@ -273,7 +280,7 @@ def get_tax_authority_customs(driver):
 
 def get_official_receiver_justice(driver):
     """
-    Scrape Official Receiver (Justice Ministry) using Gov.il JS api intercept.
+    Scrape Official Receiver (Justice Ministry) using the real CollectorsWebApi.
     """
     logging.info("Starting Official Receiver (Ministry of Justice) Scrape...")
     url = "https://www.gov.il/he/departments/publications/?OfficeId=b723f1dd-b541-4cfd-82d2-c48c9bef4187"
@@ -283,32 +290,39 @@ def get_official_receiver_justice(driver):
         driver.get(url)
         time.sleep(5)
         
-        api_url = "https://www.gov.il/he/api/PublicationApi/Index?Skip=0&Limit=10&OfficeId=b723f1dd-b541-4cfd-82d2-c48c9bef4187"
-        js_code = f"var callback = arguments[0]; fetch('{api_url}').then(r => r.json()).then(data => callback(data)).catch(e => callback({{'error': e.message}}));"
+        # Correct API using the real CollectorsWebApi
+        api_url = "https://www.gov.il/CollectorsWebApi/api/DataCollector/GetResults?CollectorType=reports&CollectorType=rfp&officeId=b723f1dd-b541-4cfd-82d2-c48c9bef4187&culture=he"
+        js_code = f"var callback = arguments[0]; fetch('{api_url}').then(r => r.json()).then(data => callback(data)).catch(e => callback({{error: e.message}}));"
         
         result = driver.execute_async_script(js_code)
         
-        if isinstance(result, dict) and "results" in result:
-            for idx, item in enumerate(result['results']):
-                title = item.get("Title", "מכרז כונס הרשמי")
-                deal_url = f"https://www.gov.il{item.get('Url', '')}" if item.get('Url') else url
-                
-                d_type = "real_estate" if "דיר" in title or "מקרקעין" in title or "נכס" in title else "equipment"
-                
-                deal = {
-                    "id": f"justice_{idx}",
-                    "type": d_type,
-                    "title": f"הכונס הרשמי: {title}",
-                    "source": "משרד המשפטים - כונס הנכסים הרשמי",
-                    "openingPrice": 0,
-                    "marketValue": 0,
-                    "timeLeft": "פתוח להצעות",
-                    "link": deal_url
-                }
-                deal = ai_parser.parse_deal(deal)
-                deal = pdf_analyzer.append_risk_analysis(deal)
-                deal = benchmark.enrich_with_benchmark(deal)
-                deals.append(deal)
+        items = []
+        if isinstance(result, dict):
+            items = result.get('results', result.get('Results', []))
+        elif isinstance(result, list):
+            items = result
+        
+        for idx, item in enumerate(items):
+            title = item.get("Title", item.get("title", "מכרז כונס הרשמי"))
+            item_url = item.get("Url", item.get("url", ""))
+            deal_url = f"https://www.gov.il{item_url}" if item_url and not item_url.startswith('http') else (item_url or url)
+            
+            d_type = "real_estate" if "דיר" in title or "מקרקעין" in title or "נכס" in title else "equipment"
+            
+            deal = {
+                "id": f"justice_{idx}",
+                "type": d_type,
+                "title": f"הכונס הרשמי: {title}",
+                "source": "משרד המשפטים - כונס הנכסים הרשמי",
+                "openingPrice": 0,
+                "marketValue": 0,
+                "timeLeft": "פתוח להצעות",
+                "link": deal_url
+            }
+            deal = ai_parser.parse_deal(deal)
+            deal = pdf_analyzer.append_risk_analysis(deal)
+            deal = benchmark.enrich_with_benchmark(deal)
+            deals.append(deal)
         
         logging.info(f"Successfully scraped {len(deals)} items from Official Receiver.")
     except Exception as e:
