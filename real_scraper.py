@@ -154,18 +154,31 @@ def get_merkava_car_data_real(driver):
 def get_merkava_eca_data_real(driver):
     """
     Scrape ECA (Enforcement & Collection Authority - רשות האכיפה והגבייה).
-    The old /rechev URL is dead. ECA moved to eca.gov.il -> gov.il publications.
+    Only return genuinely useful auction/sale items. Skip nav/admin pages.
     """
     logging.info("Starting ECA (Enforcement Authority - Hotzaa LaPoal) Scrape...")
     url = "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page"
     deals = []
+    
+    # These are nav/admin page titles that the API returns but are NOT auctions
+    NON_AUCTION_BLACKLIST = [
+        "מידע לחייבים", "טופס פניה", "קביעת תור", "פעילות תחזוקה",
+        "צור קשר", "שירותים", "ניווט", "נגישות", "פרטיות",
+        "שאלות ותשובות", "מדריך", "הגשת תלונה", "זימון", "לשכות",
+        "אודות", "מבנה ארגוני", "חוק", "תקנות", "הנחיות"
+    ]
+    
+    # Items MUST contain at least one of these to be considered a real auction
+    AUCTION_KEYWORDS = [
+        "מכרז", "מכירה פומבית", "מכירת", "מכירות", "נכסים למכירה",
+        "רכבים למכירה", "ציוד למכירה", "הצעות מחיר", "כינוס"
+    ]
 
     try:
         driver.get(url)
         time.sleep(6)
 
-        # Use the CollectorsWebApi with the ECA office ID
-        # ECA OfficeId discovered from eca.gov.il redirect
+        # Use the CollectorsWebApi for publications from the ECA office
         eca_api = "https://www.gov.il/CollectorsWebApi/api/DataCollector/GetResults?CollectorType=rfp&CollectorType=reports&officeId=f00eaeab-7f8f-4f65-9b8e-d87b6d6d23a8&culture=he"
         js = f"var cb=arguments[0];fetch('{eca_api}').then(r=>r.json()).then(d=>cb(d)).catch(e=>cb({{error:e.message}}));"
         result = driver.execute_async_script(js)
@@ -176,13 +189,23 @@ def get_merkava_eca_data_real(driver):
         elif isinstance(result, list):
             items = result
 
-        for idx, item in enumerate(items[:10]):
+        for idx, item in enumerate(items[:15]):
             title = item.get("Title", item.get("title", ""))
-            if not title:
+            if not title or len(title) < 5:
                 continue
+            
+            # Skip nav/admin pages
+            if any(bad in title for bad in NON_AUCTION_BLACKLIST):
+                logging.info(f"ECA: skipping non-auction item: {title[:40]}")
+                continue
+            
+            # Must look like an actual auction/sale
+            if not any(kw in title for kw in AUCTION_KEYWORDS):
+                logging.info(f"ECA: skipping (no auction keyword): {title[:40]}")
+                continue
+            
             item_url = item.get("Url", item.get("url", ""))
             deal_url = f"https://www.gov.il{item_url}" if item_url and not item_url.startswith("http") else (item_url or url)
-
             deal_type = "car" if any(w in title for w in ["רכב", "מכונית", "אופנוע", "משאית"]) else "equipment"
 
             deal = {
@@ -200,31 +223,7 @@ def get_merkava_eca_data_real(driver):
             deal = benchmark.enrich_with_benchmark(deal)
             deals.append(deal)
 
-        # Fallback: heuristic parse from page text if API returned nothing
-        if not deals:
-            soup = BeautifulSoup(driver.page_source, 'html.parser')
-            text_blocks = [t for t in soup.get_text(separator='|', strip=True).split('|') if len(t) > 3]
-            for idx, block in enumerate(text_blocks):
-                if ("מכרז" in block or "פומבי" in block or "הוצאה לפועל" in block) and 10 < len(block) < 80:
-                    if "חיפוש" not in block and "תפריט" not in block:
-                        deal = {
-                            "id": f"eca_heuristic_{idx}",
-                            "type": "equipment",
-                            "title": f"הוצאה לפועל: {block}",
-                            "source": "רשות האכיפה והגבייה - הוצאה לפועל",
-                            "openingPrice": 0,
-                            "marketValue": 0,
-                            "timeLeft": "פרטים בקובץ",
-                            "link": url,
-                        }
-                        deal = ai_parser.parse_deal(deal)
-                        deal = pdf_analyzer.append_risk_analysis(deal)
-                        deal = benchmark.enrich_with_benchmark(deal)
-                        deals.append(deal)
-                        if len(deals) >= 5:
-                            break
-
-        logging.info(f"Successfully scraped {len(deals)} items from ECA.")
+        logging.info(f"Successfully scraped {len(deals)} valid auction items from ECA.")
     except Exception as e:
         logging.error(f"ECA scraping failed: {e}")
 
