@@ -153,65 +153,83 @@ def get_merkava_car_data_real(driver):
     return deals
 def get_merkava_eca_data_real(driver):
     """
-    Scrape genuine Oca'a LaPoal from Merkava /rechev.
+    Scrape ECA (Enforcement & Collection Authority - רשות האכיפה והגבייה).
+    The old /rechev URL is dead. ECA moved to eca.gov.il -> gov.il publications.
     """
-    logging.info("Starting Merkava ECA (Oca'a LaPoal) Scrape...")
-    url = "https://merkava.mrp.gov.il/rechev"
+    logging.info("Starting ECA (Enforcement Authority - Hotzaa LaPoal) Scrape...")
+    url = "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page"
     deals = []
-    
+
     try:
-        logging.info(f"Navigating to {url}...")
         driver.get(url)
-        time.sleep(10) # Let Angular render
-        
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        
-        # Similar heuristic approach as carpub: extract text blocks and find keywords
-        text_blocks = [t for t in soup.get_text(separator='|', strip=True).split('|') if len(t) > 3]
-        
-        auctions_found = []
-        for idx, block in enumerate(text_blocks):
-            if "מכרז" in block or "הוצאה לפועל" in block or "פומבי" in block or "רכב" in block:
-                if 10 < len(block) < 80 and "חיפוש" not in block and "תפריט" not in block:
-                    title = block
-                    try:
-                        auction_num = text_blocks[idx+1] if (idx+1) < len(text_blocks) else "N/A"
-                        location = text_blocks[idx+2] if (idx+2) < len(text_blocks) else "N/A"
-                        
-                        deal_type = "car" if any(x in title for x in ["רכב", "מכונית", "אופנוע", "משאית", "טרקטור", "יונדאי", "מאזדה", "שברולט"]) else "equipment"
-                        
+        time.sleep(6)
+
+        # Use the CollectorsWebApi with the ECA office ID
+        # ECA OfficeId discovered from eca.gov.il redirect
+        eca_api = "https://www.gov.il/CollectorsWebApi/api/DataCollector/GetResults?CollectorType=rfp&CollectorType=reports&officeId=f00eaeab-7f8f-4f65-9b8e-d87b6d6d23a8&culture=he"
+        js = f"var cb=arguments[0];fetch('{eca_api}').then(r=>r.json()).then(d=>cb(d)).catch(e=>cb({{error:e.message}}));"
+        result = driver.execute_async_script(js)
+
+        items = []
+        if isinstance(result, dict):
+            items = result.get('results', result.get('Results', []))
+        elif isinstance(result, list):
+            items = result
+
+        for idx, item in enumerate(items[:10]):
+            title = item.get("Title", item.get("title", ""))
+            if not title:
+                continue
+            item_url = item.get("Url", item.get("url", ""))
+            deal_url = f"https://www.gov.il{item_url}" if item_url and not item_url.startswith("http") else (item_url or url)
+
+            deal_type = "car" if any(w in title for w in ["רכב", "מכונית", "אופנוע", "משאית"]) else "equipment"
+
+            deal = {
+                "id": f"eca_{idx}",
+                "type": deal_type,
+                "title": f"הוצאה לפועל: {title}",
+                "source": "רשות האכיפה והגבייה - הוצאה לפועל",
+                "openingPrice": 0,
+                "marketValue": 0,
+                "timeLeft": "פתוח להצעות",
+                "link": deal_url,
+            }
+            deal = ai_parser.parse_deal(deal)
+            deal = pdf_analyzer.append_risk_analysis(deal)
+            deal = benchmark.enrich_with_benchmark(deal)
+            deals.append(deal)
+
+        # Fallback: heuristic parse from page text if API returned nothing
+        if not deals:
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            text_blocks = [t for t in soup.get_text(separator='|', strip=True).split('|') if len(t) > 3]
+            for idx, block in enumerate(text_blocks):
+                if ("מכרז" in block or "פומבי" in block or "הוצאה לפועל" in block) and 10 < len(block) < 80:
+                    if "חיפוש" not in block and "תפריט" not in block:
                         deal = {
-                            "id": f"eca_{len(auctions_found)}",
-                            "type": deal_type,
-                            "title": f"{title}",
-                            "source": "הוצאה לפועל",
+                            "id": f"eca_heuristic_{idx}",
+                            "type": "equipment",
+                            "title": f"הוצאה לפועל: {block}",
+                            "source": "רשות האכיפה והגבייה - הוצאה לפועל",
                             "openingPrice": 0,
                             "marketValue": 0,
-                            "timeLeft": location[:20],
+                            "timeLeft": "פרטים בקובץ",
                             "link": url,
-                            # Adding a sample dummy PDF link to ECA deals to demonstrate the Risk Analysis AI reading a PDF
-                            "pdf_link": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" if len(auctions_found) % 2 == 0 else None
                         }
                         deal = ai_parser.parse_deal(deal)
                         deal = pdf_analyzer.append_risk_analysis(deal)
                         deal = benchmark.enrich_with_benchmark(deal)
-                        auctions_found.append(deal)
-                    except IndexError:
-                        pass
+                        deals.append(deal)
+                        if len(deals) >= 5:
+                            break
 
-        unique_deals = []
-        seen_titles = set()
-        for deal in auctions_found:
-            if deal['title'] not in seen_titles and len(unique_deals) < 10:
-                unique_deals.append(deal)
-                seen_titles.add(deal['title'])
-                
-        deals = unique_deals
         logging.info(f"Successfully scraped {len(deals)} items from ECA.")
     except Exception as e:
         logging.error(f"ECA scraping failed: {e}")
-        
+
     return deals
+
 
 def get_merkava_eca_equipment_data():
     """
