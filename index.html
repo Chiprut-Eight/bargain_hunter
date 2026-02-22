@@ -803,6 +803,25 @@
               </section>
             </div>
             
+            <!-- Lead Generation Banner (Monetization) -->
+            <div class="px-4 sm:px-6 pb-4">
+              <div class="bg-gradient-to-r from-emerald-900/40 to-emerald-800/20 border border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                <div class="z-10 flex-grow text-center sm:text-right">
+                   ${deal.type === 'real_estate' 
+                     ? '<h4 class="text-lg font-bold text-emerald-400 mb-1">לא רוצה לקחת סיכונים במכרז נדל"ן?</h4><p class="text-sm text-slate-300">קבל עכשיו ליווי משפטי מעו"ד מקרקעין מומחה להגשת מכרזים ללא תקלות.</p>' 
+                     : '<h4 class="text-lg font-bold text-emerald-400 mb-1">התייעץ עם שמאי מומחה לפני ההגשה!</h4><p class="text-sm text-slate-300">בדוק את כדאיות העסקה ודע בדיוק כמה טווח ביטחון לקחת.</p>'
+                   }
+                </div>
+                <div class="z-10 flex-shrink-0 w-full sm:w-auto">
+                   <a href="https://wa.me/972501234567?text=${encodeURIComponent('היי, אני צריך עזרה מקצועית לגבי עסקה שראיתי דרך מסד הנתונים של Reality Hunter (מזהה עסקה: ' + deal.id + '). אשמח לפרטים!')}" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:scale-105 active:scale-95">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                     דבר עם מומחה עכשיו
+                   </a>
+                </div>
+              </div>
+            </div>
+            
             <div class="sticky bottom-0 bg-slate-900/90 backdrop-blur border-t border-slate-700 p-4 sm:p-6 flex mt-4">
               <a href="${deal.link}" target="_blank" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 px-6 rounded-xl text-center shadow-lg shadow-brand-500/25 transition-colors text-lg">
                 מעבר לעמוד המכרז הממשלתי
