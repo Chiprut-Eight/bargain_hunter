@@ -1,4 +1,5 @@
 import json
+import os
 import logging
 import time
 from selenium import webdriver
@@ -154,74 +155,66 @@ def get_merkava_car_data_real(driver):
 def get_merkava_eca_data_real(driver):
     """
     Scrape ECA (Enforcement & Collection Authority - רשות האכיפה והגבייה).
-    Only return genuinely useful auction/sale items. Skip nav/admin pages.
+    Searches gov.il CollectorsWebApi by auction keywords to find real sale listings.
     """
     logging.info("Starting ECA (Enforcement Authority - Hotzaa LaPoal) Scrape...")
     url = "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page"
     deals = []
     
-    # These are nav/admin page titles that the API returns but are NOT auctions
-    NON_AUCTION_BLACKLIST = [
-        "מידע לחייבים", "טופס פניה", "קביעת תור", "פעילות תחזוקה",
-        "צור קשר", "שירותים", "ניווט", "נגישות", "פרטיות",
-        "שאלות ותשובות", "מדריך", "הגשת תלונה", "זימון", "לשכות",
-        "אודות", "מבנה ארגוני", "חוק", "תקנות", "הנחיות"
-    ]
-    
-    # Items MUST contain at least one of these to be considered a real auction
-    AUCTION_KEYWORDS = [
-        "מכרז", "מכירה פומבית", "מכירת", "מכירות", "נכסים למכירה",
-        "רכבים למכירה", "ציוד למכירה", "הצעות מחיר", "כינוס"
-    ]
+    AUCTION_KEYWORDS = ["מכירה פומבית", "מכרז ציוד", "מכרז רכב", "כינוס נכסים", "מכירת ציוד", "מכירת רכבים"]
 
     try:
         driver.get(url)
-        time.sleep(6)
+        time.sleep(5)
 
-        # Use the CollectorsWebApi for publications from the ECA office
-        eca_api = "https://www.gov.il/CollectorsWebApi/api/DataCollector/GetResults?CollectorType=rfp&CollectorType=reports&officeId=f00eaeab-7f8f-4f65-9b8e-d87b6d6d23a8&culture=he"
-        js = f"var cb=arguments[0];fetch('{eca_api}').then(r=>r.json()).then(d=>cb(d)).catch(e=>cb({{error:e.message}}));"
-        result = driver.execute_async_script(js)
+        import urllib.parse
+        seen_ids = set()
+        
+        for keyword in AUCTION_KEYWORDS:
+            encoded = urllib.parse.quote(keyword)
+            api_url = f"https://www.gov.il/CollectorsWebApi/api/DataCollector/GetResults?CollectorType=rfp&CollectorType=reports&Keywords={encoded}&officeId=f00eaeab-7f8f-4f65-9b8e-d87b6d6d23a8&culture=he"
+            js = f"var cb=arguments[0];fetch('{api_url}').then(r=>r.json()).then(d=>cb(d)).catch(e=>cb({{error:e.message}}));"
+            result = driver.execute_async_script(js)
 
-        items = []
-        if isinstance(result, dict):
-            items = result.get('results', result.get('Results', []))
-        elif isinstance(result, list):
-            items = result
+            items = []
+            if isinstance(result, dict):
+                items = result.get('results', result.get('Results', []))
+            elif isinstance(result, list):
+                items = result
 
-        for idx, item in enumerate(items[:15]):
-            title = item.get("Title", item.get("title", ""))
-            if not title or len(title) < 5:
-                continue
+            for item in items:
+                title = item.get("Title", item.get("title", ""))
+                if not title or len(title) < 5:
+                    continue
+                item_id = item.get("Id", item.get("id", title))
+                if item_id in seen_ids:
+                    continue
+                seen_ids.add(item_id)
+
+                item_url = item.get("Url", item.get("url", ""))
+                deal_url = f"https://www.gov.il{item_url}" if item_url and not item_url.startswith("http") else (item_url or url)
+                deal_type = "car" if any(w in title for w in ["רכב", "מכונית", "אופנוע", "משאית"]) else "equipment"
+
+                deal = {
+                    "id": f"eca_{len(deals)}",
+                    "type": deal_type,
+                    "title": f"הוצאה לפועל: {title}",
+                    "source": "רשות האכיפה והגבייה - הוצאה לפועל",
+                    "openingPrice": 0,
+                    "marketValue": 0,
+                    "timeLeft": "פתוח להצעות",
+                    "link": deal_url,
+                }
+                deal = ai_parser.parse_deal(deal)
+                deal = pdf_analyzer.append_risk_analysis(deal)
+                deal = benchmark.enrich_with_benchmark(deal)
+                deals.append(deal)
+                
+                if len(deals) >= 10:
+                    break
             
-            # Skip nav/admin pages
-            if any(bad in title for bad in NON_AUCTION_BLACKLIST):
-                logging.info(f"ECA: skipping non-auction item: {title[:40]}")
-                continue
-            
-            # Must look like an actual auction/sale
-            if not any(kw in title for kw in AUCTION_KEYWORDS):
-                logging.info(f"ECA: skipping (no auction keyword): {title[:40]}")
-                continue
-            
-            item_url = item.get("Url", item.get("url", ""))
-            deal_url = f"https://www.gov.il{item_url}" if item_url and not item_url.startswith("http") else (item_url or url)
-            deal_type = "car" if any(w in title for w in ["רכב", "מכונית", "אופנוע", "משאית"]) else "equipment"
-
-            deal = {
-                "id": f"eca_{idx}",
-                "type": deal_type,
-                "title": f"הוצאה לפועל: {title}",
-                "source": "רשות האכיפה והגבייה - הוצאה לפועל",
-                "openingPrice": 0,
-                "marketValue": 0,
-                "timeLeft": "פתוח להצעות",
-                "link": deal_url,
-            }
-            deal = ai_parser.parse_deal(deal)
-            deal = pdf_analyzer.append_risk_analysis(deal)
-            deal = benchmark.enrich_with_benchmark(deal)
-            deals.append(deal)
+            if len(deals) >= 10:
+                break
 
         logging.info(f"Successfully scraped {len(deals)} valid auction items from ECA.")
     except Exception as e:
@@ -524,11 +517,33 @@ def run_all_scrapers():
         if driver:
             driver.quit()
     
-    # We write to the file even if it's 0 to enforce absolute transparency as the user requested.
+    # --- Merge-by-source logic ---
+    # Instead of overwriting the entire file, we merge:
+    # - Keep existing deals from sources that returned 0 new results (source had nothing today)
+    # - Replace deals from sources that returned new results (fresh data wins)
+    # This prevents any single empty run from wiping real data.
     try:
+        existing_deals = []
+        if os.path.exists(DEALS_FILEPATH):
+            with open(DEALS_FILEPATH, 'r', encoding='utf-8') as f:
+                try:
+                    existing_deals = json.load(f)
+                except Exception:
+                    existing_deals = []
+
+        # Build set of sources that returned fresh data in this run
+        fresh_sources = set(d.get('source', '') for d in all_deals)
+
+        # Keep existing deals only from sources that had NO fresh data this run
+        preserved = [d for d in existing_deals if d.get('source', '') not in fresh_sources]
+
+        # Merge: fresh data + preserved old data
+        merged_deals = all_deals + preserved
+
         with open(DEALS_FILEPATH, 'w', encoding='utf-8') as f:
-            json.dump(all_deals, f, ensure_ascii=False, indent=2)
-        logging.info(f"Successfully saved {len(all_deals)} total authentic deals to {DEALS_FILEPATH}")
+            json.dump(merged_deals, f, ensure_ascii=False, indent=2)
+        logging.info(f"Successfully saved {len(merged_deals)} total deals to {DEALS_FILEPATH} "
+                     f"({len(all_deals)} new, {len(preserved)} preserved from previous run)")
     except IOError as e:
         logging.error(f"Failed to write to {DEALS_FILEPATH}: {e}")
 
