@@ -17,13 +17,16 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      75000,
-      75000,
-      75500,
+      71000,
+      74500,
+      74500,
+      74500,
       76500,
-      79000
+      77500,
+      78500,
+      81500
     ],
-    "recommendedBid": 76200
+    "recommendedBid": 76062
   },
   {
     "id": "merkava_202-2026",
@@ -43,14 +46,15 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      73000,
-      75000,
-      76500,
+      68500,
+      74500,
+      74500,
       77000,
       77500,
-      80500
+      79000,
+      81500
     ],
-    "recommendedBid": 76583
+    "recommendedBid": 76071
   },
   {
     "id": "merkava_103-2026",
@@ -70,14 +74,15 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      75000,
+      70500,
       75000,
       75500,
-      78500,
-      79000,
-      81500
+      78000,
+      78000,
+      79500,
+      80500
     ],
-    "recommendedBid": 77416
+    "recommendedBid": 76714
   },
   {
     "id": "merkava_203-2026",
@@ -97,16 +102,13 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      71000,
-      72000,
-      74000,
-      75500,
-      77500,
-      78500,
-      83000,
-      84500
+      70000,
+      70500,
+      75000,
+      76000,
+      77500
     ],
-    "recommendedBid": 77000
+    "recommendedBid": 73800
   },
   {
     "id": "merkava_104-2026",
@@ -126,16 +128,13 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      74500,
-      74500,
-      75500,
-      76000,
-      76000,
+      70500,
+      72500,
+      72500,
       77500,
-      81500,
-      82000
+      81000
     ],
-    "recommendedBid": 77187
+    "recommendedBid": 74800
   },
   {
     "id": "merkava_204-2026",
@@ -155,14 +154,15 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
+      70500,
+      72500,
       73500,
-      74000,
-      75000,
-      78000,
-      78500,
-      80500
+      73500,
+      77000,
+      79000,
+      80000
     ],
-    "recommendedBid": 76583
+    "recommendedBid": 75142
   },
   {
     "id": "merkava_105-2026",
@@ -182,13 +182,14 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      73000,
-      75000,
-      75000,
+      71000,
+      72000,
       76000,
-      76500
+      77000,
+      78000,
+      78000
     ],
-    "recommendedBid": 75100
+    "recommendedBid": 75333
   },
   {
     "id": "merkava_205-2026",
@@ -208,13 +209,15 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      73000,
-      74000,
+      73500,
+      76000,
       76500,
-      78500,
-      82500
+      77500,
+      77500,
+      78000,
+      80500
     ],
-    "recommendedBid": 76900
+    "recommendedBid": 77071
   },
   {
     "id": "merkava_106-2026",
@@ -234,14 +237,14 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      72500,
-      77000,
-      79500,
-      79500,
+      71000,
+      73000,
+      74500,
+      74500,
       81500,
-      81500
+      83000
     ],
-    "recommendedBid": 78583
+    "recommendedBid": 76250
   },
   {
     "id": "merkava_206-2026",
@@ -261,14 +264,16 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      70500,
+      73500,
+      74500,
+      75000,
+      76000,
       76500,
-      79000,
-      79500,
-      82000,
-      82500
+      77500,
+      81500,
+      81500
     ],
-    "recommendedBid": 78333
+    "recommendedBid": 77000
   },
   {
     "id": "merkava_101-2027",
@@ -288,14 +293,15 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      73500,
+      73000,
+      74000,
+      76000,
+      76000,
       76000,
       77500,
-      78000,
-      79500,
-      80000
+      79500
     ],
-    "recommendedBid": 77416
+    "recommendedBid": 76000
   },
   {
     "id": "merkava_329",
@@ -315,16 +321,16 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      70500,
       73500,
       74500,
       77000,
-      77500,
-      79000,
-      80500,
-      81000
+      78500,
+      81000,
+      81500,
+      81500,
+      82000
     ],
-    "recommendedBid": 76687
+    "recommendedBid": 78687
   },
   {
     "id": "merkava_201-2027",
@@ -344,14 +350,14 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
+      70500,
+      72000,
+      72000,
       72500,
-      73500,
-      74000,
       76000,
-      76500,
-      80500
+      78000
     ],
-    "recommendedBid": 75500
+    "recommendedBid": 73500
   },
   {
     "id": "merkava_357",
@@ -371,43 +377,139 @@
       "הערות": "רכב מכרז AS-IS"
     },
     "historicalBids": [
-      72000,
-      74000,
-      74500,
-      75500,
-      76500,
+      73000,
+      73500,
+      73500,
       78000,
-      79000
+      78000,
+      78500,
+      82500
     ],
-    "recommendedBid": 75642
+    "recommendedBid": 76714
   },
   {
-    "id": "eca_0",
-    "type": "car",
-    "title": "מכרז מכירת כלי רכב",
-    "source": "הוצאה לפועל",
-    "openingPrice": 45500,
-    "marketValue": 70000,
-    "timeLeft": "פעולה קודמת",
-    "link": "https://merkava.mrp.gov.il/rechev",
-    "pdf_link": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+    "id": "eca_heuristic_14",
+    "type": "equipment",
+    "title": "הוצאה לפועל: אזור אישי - הוצאה לפועל",
+    "source": "רשות האכיפה והגבייה - הוצאה לפועל",
+    "openingPrice": 16250,
+    "marketValue": 25000,
+    "timeLeft": "פרטים בקובץ",
+    "link": "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page",
     "raw_extracted": false,
     "images": [],
     "specs": {
-      "קילומטראז'": "יש לבדוק בנספח התמונות",
-      "בעלות קודמת": "ממשלתי/רשות",
-      "הערות": "רכב מכרז AS-IS"
+      "מצב": "משומש - מוחרם"
     },
-    "risk_flags": [],
     "historicalBids": [
-      50000,
-      52000,
-      52500,
-      53000,
-      59000,
-      59000
+      18000,
+      18000,
+      19000,
+      19000,
+      19500,
+      20000,
+      20000,
+      20500
     ],
-    "recommendedBid": 54250
+    "recommendedBid": 19250
+  },
+  {
+    "id": "eca_heuristic_38",
+    "type": "equipment",
+    "title": "הוצאה לפועל: זימון תור ללשכות ההוצאה לפועל",
+    "source": "רשות האכיפה והגבייה - הוצאה לפועל",
+    "openingPrice": 16250,
+    "marketValue": 25000,
+    "timeLeft": "פרטים בקובץ",
+    "link": "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page",
+    "raw_extracted": false,
+    "images": [],
+    "specs": {
+      "מצב": "משומש - מוחרם"
+    },
+    "historicalBids": [
+      18000,
+      18000,
+      19000,
+      19000,
+      20000
+    ],
+    "recommendedBid": 18800
+  },
+  {
+    "id": "eca_heuristic_40",
+    "type": "equipment",
+    "title": "הוצאה לפועל: טופס פנייה ללשכות ההוצאה לפועל",
+    "source": "רשות האכיפה והגבייה - הוצאה לפועל",
+    "openingPrice": 16250,
+    "marketValue": 25000,
+    "timeLeft": "פרטים בקובץ",
+    "link": "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page",
+    "raw_extracted": false,
+    "images": [],
+    "specs": {
+      "מצב": "משומש - מוחרם"
+    },
+    "historicalBids": [
+      18500,
+      18500,
+      18500,
+      19000,
+      19000,
+      19500,
+      19500,
+      20500
+    ],
+    "recommendedBid": 19125
+  },
+  {
+    "id": "eca_heuristic_45",
+    "type": "equipment",
+    "title": "הוצאה לפועל: פעילות תחזוקה איזור אישי הוצאה לפועל בתאריך 24/02/2026",
+    "source": "רשות האכיפה והגבייה - הוצאה לפועל",
+    "openingPrice": 16250,
+    "marketValue": 25000,
+    "timeLeft": "פרטים בקובץ",
+    "link": "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page",
+    "raw_extracted": false,
+    "images": [],
+    "specs": {
+      "מצב": "משומש - מוחרם"
+    },
+    "historicalBids": [
+      18000,
+      18500,
+      19000,
+      19000,
+      19000,
+      19500,
+      20000,
+      20000
+    ],
+    "recommendedBid": 19125
+  },
+  {
+    "id": "eca_heuristic_55",
+    "type": "equipment",
+    "title": "הוצאה לפועל: מידע לחייבים (בעלי חוב) בהוצאה לפועל",
+    "source": "רשות האכיפה והגבייה - הוצאה לפועל",
+    "openingPrice": 16250,
+    "marketValue": 25000,
+    "timeLeft": "פרטים בקובץ",
+    "link": "https://www.gov.il/he/departments/law_enforcement_and_collection_system_authority/govil-landing-page",
+    "raw_extracted": false,
+    "images": [],
+    "specs": {
+      "מצב": "משומש - מוחרם"
+    },
+    "historicalBids": [
+      18500,
+      19000,
+      19500,
+      20000,
+      20000
+    ],
+    "recommendedBid": 19400
   },
   {
     "id": "realestate_0",
@@ -426,14 +528,14 @@
       "הערות": "כפוף לאישור ועדת המכרזים"
     },
     "historicalBids": [
-      1049500,
-      1063500,
+      1086500,
       1099000,
-      1104000,
-      1155500,
-      1250500
+      1131500,
+      1150500,
+      1197500,
+      1252000
     ],
-    "recommendedBid": 1120333
+    "recommendedBid": 1152833
   },
   {
     "id": "realestate_1",
@@ -452,13 +554,13 @@
       "הערות": "כפוף לאישור ועדת המכרזים"
     },
     "historicalBids": [
-      1106500,
-      1128000,
-      1132000,
-      1147000,
-      1184000,
-      1230500
+      1125000,
+      1133000,
+      1142500,
+      1153500,
+      1187000,
+      1245000
     ],
-    "recommendedBid": 1154666
+    "recommendedBid": 1164333
   }
 ]
